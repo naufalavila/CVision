@@ -1,5 +1,5 @@
 [project]
-name = "mylocalcv"
+name = "cvision"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -8,5 +8,6 @@ dependencies = [
     "openai>=2.7.1",
     "pypdf2>=3.0.1",
     "python-dotenv>=1.2.1",
-    "streamlit>=1.51.0",
+    "reportlab>=4.4.4",
+    "streamlit>=1.51.0"
 ]
