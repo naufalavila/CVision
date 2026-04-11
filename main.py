@@ -16,11 +16,7 @@ st.markdown('#### A platform where you can get to know about your resume deepl
 st.markdown('Wanna improve your CV? Upload a PDF file and let AI do the work to analyze it!')
 
 # === Load API Keys ===
-LLAMA_338B_INSTRUCT = os.getenv('LLAMA_338B_INSTRUCT')
-NVIDIA_NEMOTRON_NANO = os.getenv('NVIDIA_NEMOTRON_NANO')
-GOOGLE_GEMMA_3 = os.getenv('GOOGLE_GEMMA_3')
-LLAMA_4_SCOUT = os.getenv('LLAMA_4_SCOUT')
-GPT_OSS_20B = os.getenv('GPT_OSS_20B')
+OPENROUTER = os.getenv('OPENROUTER')
 
 # === File Upload ===
 uploaded_file = st.file_uploader("Upload PDF", type='pdf')
@@ -35,10 +31,7 @@ output_language = st.selectbox(
 model_choice = st.selectbox(
     "Choose AI Model:",
     [
-        "meta-llama/llama-3.3-8b-instruct",
-        "nvidia/nemotron-nano-12b-v2-vl",
-        "google/gemma-3-27b-it",
-        "meta-llama/llama-4-scout",
+        "nvidia/nemotron-3-super-120b-a12b:free",
         "openai/gpt-oss-20b"
     ]
 )
@@ -61,33 +54,15 @@ def extract_text_from_file(uploaded_file):
 
 # === Model Config Berdasarkan Pilihan ===
 def get_model_config(choice):
-    if choice == "meta-llama/llama-3.3-8b-instruct":
+    if choice == "nvidia/nemotron-3-super-120b-a12b:free":
         return {
-            "api_key": LLAMA_338B_INSTRUCT,
+            "api_key": OPENROUTER,
             "base_url": "https://openrouter.ai/api/v1",
-            "model": "meta-llama/llama-3.3-8b-instruct:free"
-        }
-    elif choice == "nvidia/nemotron-nano-12b-v2-vl":
-        return {
-            "api_key": NVIDIA_NEMOTRON_NANO,
-            "base_url": "https://openrouter.ai/api/v1",
-            "model": "nvidia/nemotron-nano-12b-v2-vl:free"
-        }
-    elif choice == "google/gemma-3-27b-it":
-        return {
-            "api_key": GOOGLE_GEMMA_3,
-            "base_url": "https://openrouter.ai/api/v1",
-            "model": "google/gemma-3-27b-it:free"
-        }
-    elif choice == "meta-llama/llama-4-scout":
-        return {
-            "api_key": LLAMA_4_SCOUT,
-            "base_url": "https://openrouter.ai/api/v1",
-            "model": "meta-llama/llama-4-scout:free"
+            "model": "nvidia/nemotron-3-super-120b-a12b:free"
         }
     elif choice == "openai/gpt-oss-20b":
         return {
-            "api_key": GPT_OSS_20B,
+            "api_key": OPENROUTER,
             "base_url": "https://openrouter.ai/api/v1",
             "model": "openai/gpt-oss-20b:free"
         }
@@ -167,10 +142,7 @@ if analyze and uploaded_file:
                 max_tokens=1000
             )
 
-        # === Result Output===
         analysis_result = response.choices[0].message.content
-        st.markdown("### Hasil Analisis")
-        st.markdown(analysis_result)
 
         # === Tombol Download muncul hanya jika ada hasil ===
         pdf_buffer = create_pdf(analysis_result)
@@ -179,7 +151,13 @@ if analyze and uploaded_file:
             data=pdf_buffer,
             file_name=f"hasil_analisis_{uploaded_file.name.replace('.pdf', '')}.pdf",
             mime="application/pdf"
-        ) 
+        )
+
+        # === Result Output===
+        st.markdown("### Hasil Analisis")
+        st.markdown(analysis_result)
+
+         
 
     except Exception as e:
         st.error(f"Terjadi kesalahan: {str(e)}")
